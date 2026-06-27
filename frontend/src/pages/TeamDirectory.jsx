@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import { useRole } from '../context/RoleContext';
 import { useAuth } from '../context/AuthContext';
 import './TeamDirectory.css';
+import API_BASE_URL from '../config/api';
 
 const TeamDirectory = () => {
   const { currentRole } = useRole();
@@ -27,11 +28,11 @@ const TeamDirectory = () => {
       };
 
       // 1. Fetch Teams
-      const teamsRes = await fetch('http://localhost:5000/api/teams', { headers });
+      const teamsRes = await fetch(`${API_BASE_URL}/api/teams`, { headers });
       const teamsData = await teamsRes.json();
 
       // 2. Fetch Users (for assignment)
-      const usersRes = await fetch('http://localhost:5000/api/users', { headers });
+      const usersRes = await fetch(`${API_BASE_URL}/api/users`, { headers });
       const usersData = await usersRes.json();
 
       if (teamsRes.ok && usersRes.ok) {
@@ -70,7 +71,7 @@ const TeamDirectory = () => {
     try {
       const updatedMembers = [...team.members.map(m => m._id), newMemberId];
 
-      const res = await fetch(`http://localhost:5000/api/teams/${teamId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/teams/${teamId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +101,7 @@ const TeamDirectory = () => {
       try {
         const updatedMembers = team.members.map(m => m._id).filter(id => id !== memberId);
 
-        const res = await fetch(`http://localhost:5000/api/teams/${teamId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/teams/${teamId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -123,7 +124,7 @@ const TeamDirectory = () => {
 
   const handleAssignLead = async (teamId, newLeadId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/teams/${teamId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/teams/${teamId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

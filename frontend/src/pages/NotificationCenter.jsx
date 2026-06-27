@@ -23,6 +23,7 @@ import {
 import Layout from '../components/Layout'
 import { useAuth } from '../context/AuthContext'
 import './NotificationCenter.css'
+import API_BASE_URL from '../config/api';
 
 const NotificationCenter = () => {
   const { token } = useAuth()
@@ -39,7 +40,7 @@ const NotificationCenter = () => {
     try {
       setLoading(true);
       setError('');
-      const res = await fetch('http://localhost:5000/api/notifications', {
+      const res = await fetch(`${API_BASE_URL}/api/notifications`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }
@@ -144,7 +145,7 @@ const NotificationCenter = () => {
 
   const handleMarkRead = async (notificationId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/notifications/${notificationId}/read`, {
+      const res = await fetch(`${API_BASE_URL}/api/notifications/${notificationId}/read`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
@@ -165,7 +166,7 @@ const NotificationCenter = () => {
     if (unread.length === 0) return;
     try {
       await Promise.all(unread.map(n =>
-        fetch(`http://localhost:5000/api/notifications/${n._id}/read`, {
+        fetch(`${API_BASE_URL}/api/notifications/${n._id}/read`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`
@@ -181,7 +182,7 @@ const NotificationCenter = () => {
   const handleDeleteNotification = async (notificationId) => {
     if (confirm('Are you sure you want to delete this notification?')) {
       try {
-        const res = await fetch(`http://localhost:5000/api/notifications/${notificationId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/notifications/${notificationId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`

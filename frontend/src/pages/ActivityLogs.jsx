@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useRole } from '../context/RoleContext';
 import Layout from '../components/Layout';
 import './ActivityLogs.css';
+import API_BASE_URL from '../config/api';
 
 const ActivityLogs = () => {
   const { token } = useAuth();
@@ -59,7 +60,7 @@ const ActivityLogs = () => {
       try {
         setLoading(true);
         setError('');
-        const res = await fetch('http://localhost:5000/api/activities', {
+        const res = await fetch(`${API_BASE_URL}/api/activities`, {
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`
           }

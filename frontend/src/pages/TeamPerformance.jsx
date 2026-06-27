@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useRole } from '../context/RoleContext';
 import Layout from '../components/Layout';
 import './TeamPerformance.css';
+import API_BASE_URL from '../config/api';
 
 const TeamPerformance = () => {
   const { token, user: currentUser } = useAuth();
@@ -25,9 +26,9 @@ const TeamPerformance = () => {
         };
 
         const [teamsRes, tasksRes, leadRes] = await Promise.all([
-          fetch('http://localhost:5000/api/teams', { headers }),
-          fetch('http://localhost:5000/api/tasks', { headers }),
-          fetch('http://localhost:5000/api/analytics/leaderboard', { headers })
+          fetch(`${API_BASE_URL}/api/teams`, { headers }),
+          fetch(`${API_BASE_URL}/api/tasks`, { headers }),
+          fetch(`${API_BASE_URL}/api/analytics/leaderboard`, { headers })
         ]);
 
         const teamsData = await teamsRes.json();

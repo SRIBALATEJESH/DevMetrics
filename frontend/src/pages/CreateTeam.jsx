@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './CreateProject.css';
+import API_BASE_URL from '../config/api';
 
 const CreateTeam = () => {
   const { token } = useAuth();
@@ -28,8 +29,8 @@ const CreateTeam = () => {
         };
 
         const [usersRes, projectsRes] = await Promise.all([
-          fetch('http://localhost:5000/api/users', { headers }),
-          fetch('http://localhost:5000/api/projects', { headers })
+          fetch(`${API_BASE_URL}/api/users`, { headers }),
+          fetch(`${API_BASE_URL}/api/projects`, { headers })
         ]);
 
         const usersData = await usersRes.json();
@@ -60,7 +61,7 @@ const CreateTeam = () => {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/teams', {
+      const res = await fetch(`${API_BASE_URL}/api/teams`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

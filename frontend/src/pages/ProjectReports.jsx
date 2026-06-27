@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import './ProjectReports.css';
+import API_BASE_URL from '../config/api';
 
 const ProjectReports = () => {
   const { token, user } = useAuth();
@@ -10,7 +11,7 @@ const ProjectReports = () => {
 
   const registerReportInDB = async (title, format) => {
     try {
-      await fetch('http://localhost:5000/api/reports', {
+      await fetch(`${API_BASE_URL}/api/reports`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

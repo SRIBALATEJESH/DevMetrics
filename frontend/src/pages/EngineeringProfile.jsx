@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import './EngineeringProfile.css'
+import API_BASE_URL from '../config/api';
 
 const EngineeringProfile = () => {
   const { user, token, updateUserLocal, fetchMe } = useAuth()
@@ -42,7 +43,7 @@ const EngineeringProfile = () => {
 
   const fetchAchievements = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/achievements/my', {
+      const res = await fetch(`${API_BASE_URL}/api/achievements/my`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }
@@ -112,7 +113,7 @@ const EngineeringProfile = () => {
 
   const handleSaveSettings = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -255,7 +256,7 @@ const EngineeringProfile = () => {
         };
 
         // 1. Fetch tasks
-        const tasksRes = await fetch('http://localhost:5000/api/tasks', { headers });
+        const tasksRes = await fetch(`${API_BASE_URL}/api/tasks`, { headers });
         const tasksData = await tasksRes.json();
         const rawTasks = tasksData.data || [];
 
@@ -272,7 +273,7 @@ const EngineeringProfile = () => {
         });
 
         // 2. Fetch projects
-        const projectsRes = await fetch('http://localhost:5000/api/projects', { headers });
+        const projectsRes = await fetch(`${API_BASE_URL}/api/projects`, { headers });
         const projectsData = await projectsRes.json();
         const rawProjects = projectsData.data || [];
 
@@ -304,7 +305,7 @@ const EngineeringProfile = () => {
         }
 
         // 3. Fetch leaderboard for team rank
-        const leadRes = await fetch('http://localhost:5000/api/analytics/leaderboard', { headers });
+        const leadRes = await fetch(`${API_BASE_URL}/api/analytics/leaderboard`, { headers });
         const leadData = await leadRes.json();
         const leaderboard = leadData.data || [];
 
@@ -318,7 +319,7 @@ const EngineeringProfile = () => {
         let collaborationScore = 90;
         let repositoryScore = 85;
         try {
-          const scoreRes = await fetch('http://localhost:5000/api/analytics/user/', { headers });
+          const scoreRes = await fetch(`${API_BASE_URL}/api/analytics/user/`, { headers });
           const scoreData = await scoreRes.json();
           if (scoreData.data) {
             contributionScore = Math.round(scoreData.data.contributionScore);
@@ -336,7 +337,7 @@ const EngineeringProfile = () => {
 
         // Fetch Repository Health scores
         try {
-          const repoRes = await fetch('http://localhost:5000/api/analytics/repository-insights', { headers });
+          const repoRes = await fetch(`${API_BASE_URL}/api/analytics/repository-insights`, { headers });
           const repoData = await repoRes.json();
           const repos = repoData.data || [];
           if (repos.length > 0) {
@@ -408,7 +409,7 @@ const EngineeringProfile = () => {
         setProductivityData(updatedProdData);
 
         // 7. Fetch activity logs
-        const logRes = await fetch('http://localhost:5000/api/activities', { headers });
+        const logRes = await fetch(`${API_BASE_URL}/api/activities`, { headers });
         const logData = await logRes.json();
         const logsList = logData.data || [];
 
@@ -540,7 +541,7 @@ const EngineeringProfile = () => {
 
   const handleSaveProfile = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1035,7 +1036,7 @@ const EngineeringProfile = () => {
                           
                           // Save profile picture
                           try {
-                            const res = await fetch(`http://localhost:5000/api/users/${user.id}`, {
+                            const res = await fetch(`${API_BASE_URL}/api/users/${user.id}`, {
                               method: 'PUT',
                               headers: {
                                 'Content-Type': 'application/json',

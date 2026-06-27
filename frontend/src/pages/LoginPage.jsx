@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Check, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import './LoginPage.css'
+import API_BASE_URL from '../config/api';
 
 const LoginPage = () => {
   const { user, loginWithAPI, loginWithGoogle, fetchMe, setNeedsRole } = useAuth()
@@ -103,7 +104,7 @@ const LoginPage = () => {
   const handleGitHubLogin = () => {
     setError('')
     setGithubLoading(true)
-    window.location.href = 'http://localhost:5000/api/auth/github';
+    window.location.href = `${API_BASE_URL}/api/auth/github`;
   }
 
   return (

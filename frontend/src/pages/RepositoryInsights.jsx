@@ -4,6 +4,7 @@ import { Line, Doughnut } from 'react-chartjs-2';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './RepositoryInsights.css';
+import API_BASE_URL from '../config/api';
 
 const RepositoryInsights = () => {
   const { token } = useAuth();
@@ -16,7 +17,7 @@ const RepositoryInsights = () => {
     const fetchInsights = async (showLoading = true) => {
       try {
         if (showLoading) setLoading(true);
-        const res = await fetch('http://localhost:5000/api/analytics/repository-insights', {
+        const res = await fetch(`${API_BASE_URL}/api/analytics/repository-insights`, {
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`
           }

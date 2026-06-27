@@ -4,6 +4,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement,
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './AdminDashboard.css';
+import API_BASE_URL from '../config/api';
 
 // Register Chart.js components
 ChartJS.register(
@@ -40,11 +41,11 @@ const AdminDashboard = () => {
         };
 
         const [projRes, teamRes, taskRes, userRes, logsRes] = await Promise.all([
-          fetch('http://localhost:5000/api/projects', { headers }),
-          fetch('http://localhost:5000/api/teams', { headers }),
-          fetch('http://localhost:5000/api/tasks', { headers }),
-          fetch('http://localhost:5000/api/users', { headers }),
-          fetch('http://localhost:5000/api/activities', { headers })
+          fetch(`${API_BASE_URL}/api/projects`, { headers }),
+          fetch(`${API_BASE_URL}/api/teams`, { headers }),
+          fetch(`${API_BASE_URL}/api/tasks`, { headers }),
+          fetch(`${API_BASE_URL}/api/users`, { headers }),
+          fetch(`${API_BASE_URL}/api/activities`, { headers })
         ]);
 
         const projData = await projRes.json();

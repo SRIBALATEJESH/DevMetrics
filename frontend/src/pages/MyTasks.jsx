@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useRole } from '../context/RoleContext';
 import Layout from '../components/Layout';
 import './MyTasks.css';
+import API_BASE_URL from '../config/api';
 
 const MyTasks = () => {
   const { user, token } = useAuth();
@@ -18,7 +19,7 @@ const MyTasks = () => {
       setLoading(true);
       setError('');
       
-      const res = await fetch(`http://localhost:5000/api/tasks?assignee=${user.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/tasks?assignee=${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }
@@ -65,7 +66,7 @@ const MyTasks = () => {
 
   const handleMarkDone = async (taskId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +89,7 @@ const MyTasks = () => {
   const handleDeleteTask = async (taskId) => {
     if (confirm('Are you sure you want to delete this task?')) {
       try {
-        const res = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`

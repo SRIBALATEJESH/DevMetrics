@@ -18,6 +18,7 @@ import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import { useRole } from '../context/RoleContext';
 import './RepositoryLinking.css';
+import API_BASE_URL from '../config/api';
 
 const RepositoryLinking = () => {
   const { projectId } = useParams();
@@ -52,14 +53,14 @@ const RepositoryLinking = () => {
         };
 
         // Fetch projects
-        const projRes = await fetch('http://localhost:5000/api/projects', { headers });
+        const projRes = await fetch(`${API_BASE_URL}/api/projects`, { headers });
         const projData = await projRes.json();
         if (projRes.ok) {
           setProjects(projData.data || []);
         }
 
         // Fetch repositories
-        const repoRes = await fetch('http://localhost:5000/api/auth/github/repositories', { headers });
+        const repoRes = await fetch(`${API_BASE_URL}/api/auth/github/repositories`, { headers });
         const repoData = await repoRes.json();
         if (repoRes.ok) {
           setRepos(repoData.data || []);
@@ -97,7 +98,7 @@ const RepositoryLinking = () => {
       };
 
       // 1. Fetch repositories and find the one linked to this project
-      const repoRes = await fetch('http://localhost:5000/api/auth/github/repositories', { headers });
+      const repoRes = await fetch(`${API_BASE_URL}/api/auth/github/repositories`, { headers });
       const repoData = await repoRes.json();
       if (repoRes.ok) {
         const linked = (repoData.data || []).find(r => r.project?._id === selectedProjectId || r.project === selectedProjectId);
@@ -105,7 +106,7 @@ const RepositoryLinking = () => {
 
         // If a linked repo exists, fetch its latest commit and activities
         if (linked) {
-          const syncRes = await fetch('http://localhost:5000/api/auth/github/analytics', { headers });
+          const syncRes = await fetch(`${API_BASE_URL}/api/auth/github/analytics`, { headers });
           const syncData = await syncRes.json();
           if (syncRes.ok && syncData.data) {
             // Find latest commit in syncData
@@ -151,7 +152,7 @@ const RepositoryLinking = () => {
         'Content-Type': 'application/json'
       };
 
-      const res = await fetch('http://localhost:5000/api/auth/github/repositories/link', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/repositories/link`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -187,7 +188,7 @@ const RepositoryLinking = () => {
         'Content-Type': 'application/json'
       };
 
-      const res = await fetch('http://localhost:5000/api/auth/github/repositories/unlink', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/repositories/unlink`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -220,7 +221,7 @@ const RepositoryLinking = () => {
         'Content-Type': 'application/json'
       };
 
-      const res = await fetch('http://localhost:5000/api/auth/github/repositories/sync', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/repositories/sync`, {
         method: 'POST',
         headers,
         body: JSON.stringify({

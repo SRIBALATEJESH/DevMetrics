@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './CreateTask.css';
+import API_BASE_URL from '../config/api';
 
 const CreateTask = () => {
   const { token } = useAuth();
@@ -31,8 +32,8 @@ const CreateTask = () => {
         };
 
         const [usersRes, projectsRes] = await Promise.all([
-          fetch('http://localhost:5000/api/users', { headers }),
-          fetch('http://localhost:5000/api/projects', { headers })
+          fetch(`${API_BASE_URL}/api/users`, { headers }),
+          fetch(`${API_BASE_URL}/api/projects`, { headers })
         ]);
 
         const usersData = await usersRes.json();
@@ -70,7 +71,7 @@ const CreateTask = () => {
         assignee: formData.assignee || undefined
       };
 
-      const res = await fetch('http://localhost:5000/api/tasks', {
+      const res = await fetch(`${API_BASE_URL}/api/tasks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

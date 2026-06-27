@@ -28,6 +28,7 @@ import {
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './GithubAnalytics.css';
+import API_BASE_URL from '../config/api';
 
 // Register Chart.js components
 ChartJS.register(
@@ -58,7 +59,7 @@ const GithubAnalyticsDashboard = () => {
       const headers = {
         'Authorization': `Bearer ${token || localStorage.getItem('token')}`
       };
-      const res = await fetch('http://localhost:5000/api/auth/github/analytics', { headers });
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/analytics`, { headers });
       const data = await res.json();
       if (res.ok) {
         setAnalytics(data.data);
@@ -78,7 +79,7 @@ const GithubAnalyticsDashboard = () => {
       const headers = {
         'Authorization': `Bearer ${token || localStorage.getItem('token')}`
       };
-      const res = await fetch('http://localhost:5000/api/auth/github/analytics', { headers });
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/analytics`, { headers });
       const data = await res.json();
       if (res.ok) {
         setAnalytics(data.data);

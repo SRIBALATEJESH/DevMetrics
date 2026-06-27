@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useRole } from '../context/RoleContext';
 import Layout from '../components/Layout';
 import './TaskBoard.css';
+import API_BASE_URL from '../config/api';
 
 const TaskBoard = () => {
   const { user, token } = useAuth();
@@ -30,7 +31,7 @@ const TaskBoard = () => {
         'Authorization': `Bearer ${token || localStorage.getItem('token')}`
       };
 
-      const res = await fetch('http://localhost:5000/api/tasks', { headers });
+      const res = await fetch(`${API_BASE_URL}/api/tasks`, { headers });
       const data = await res.json();
 
       if (res.ok) {
@@ -47,7 +48,7 @@ const TaskBoard = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/users', {
+      const res = await fetch(`${API_BASE_URL}/api/users`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }
@@ -70,7 +71,7 @@ const TaskBoard = () => {
 
   const handleStatusChange = async (taskId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ const TaskBoard = () => {
 
   const handleAssigneeChange = async (taskId, newAssigneeId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

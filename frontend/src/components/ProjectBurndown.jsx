@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ProjectBurndown.css';
+import API_BASE_URL from '../config/api';
 
 const ProjectBurndown = ({ project, token }) => {
   const [burndownData, setBurndownData] = useState([]);
@@ -12,7 +13,7 @@ const ProjectBurndown = ({ project, token }) => {
       if (!project || !project._id) return;
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/projects/${project._id}/burndown`, {
+        const res = await fetch(`${API_BASE_URL}/api/projects/${project._id}/burndown`, {
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`
           }

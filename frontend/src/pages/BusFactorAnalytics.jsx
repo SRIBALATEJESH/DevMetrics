@@ -13,6 +13,7 @@ import { Doughnut } from 'react-chartjs-2';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './BusFactorAnalytics.css';
+import API_BASE_URL from '../config/api';
 
 const BusFactorAnalytics = () => {
   const { token } = useAuth();
@@ -26,7 +27,7 @@ const BusFactorAnalytics = () => {
   useEffect(() => {
     const fetchRepos = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/auth/github/repositories', {
+        const res = await fetch(`${API_BASE_URL}/api/auth/github/repositories`, {
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`
           }
@@ -54,7 +55,7 @@ const BusFactorAnalytics = () => {
         setLoading(true);
         setError('');
 
-        let url = 'http://localhost:5000/api/analytics/bus-factor';
+        let url = `${API_BASE_URL}/api/analytics/bus-factor`;
         if (selectedRepoId) {
           url += `?repositoryId=${selectedRepoId}`;
         }

@@ -26,6 +26,7 @@ import Layout from '../components/Layout'
 import { useAuth } from '../context/AuthContext'
 import { useRole } from '../context/RoleContext'
 import './SettingsDashboard.css'
+import API_BASE_URL from '../config/api';
 
 const SettingsDashboard = () => {
   const { user, token, updateUserLocal, logout, fetchMe, connectGoogleAccount, disconnectGoogleWithAPI } = useAuth()
@@ -67,7 +68,7 @@ const SettingsDashboard = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user.id}/change-password`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}/change-password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +99,7 @@ const SettingsDashboard = () => {
   // Fetch Active Sessions
   const fetchActiveSessions = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user.id}/sessions`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}/sessions`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }
@@ -118,7 +119,7 @@ const SettingsDashboard = () => {
   const handleRevokeSession = async (sessionId) => {
     if (!confirm('Are you sure you want to revoke this session and log out that device?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user.id}/sessions/${sessionId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}/sessions/${sessionId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
@@ -140,7 +141,7 @@ const SettingsDashboard = () => {
   // Fetch Security Activity History
   const fetchSecurityLogs = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user.id}/security-logs`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}/security-logs`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }
@@ -180,13 +181,13 @@ const SettingsDashboard = () => {
   }
 
   const handleConnectGitHub = () => {
-    window.location.href = `http://localhost:5000/api/auth/github/connect?token=${token || localStorage.getItem('token')}`;
+    window.location.href = `${API_BASE_URL}/api/auth/github/connect?token=${token || localStorage.getItem('token')}`;
   };
 
   const handleDisconnectGitHub = async () => {
     if (!confirm('Are you sure you want to disconnect your GitHub account?')) return;
     try {
-      const res = await fetch('http://localhost:5000/api/github/disconnect', {
+      const res = await fetch(`${API_BASE_URL}/api/github/disconnect`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
@@ -407,7 +408,7 @@ const SettingsDashboard = () => {
 
     try {
       const compressedBase64 = await compressImage(file);
-      const res = await fetch(`http://localhost:5000/api/users/${user.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -433,7 +434,7 @@ const SettingsDashboard = () => {
     if (!confirm('Are you sure you want to remove your profile picture?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -456,7 +457,7 @@ const SettingsDashboard = () => {
 
   const handleSave = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

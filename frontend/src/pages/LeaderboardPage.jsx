@@ -3,6 +3,7 @@ import { Award, Zap, MessageSquare, AlertCircle, RefreshCw, GitCommit, GitPullRe
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './LeaderboardPage.css';
+import API_BASE_URL from '../config/api';
 
 const LeaderboardPage = () => {
   const { token, user } = useAuth();
@@ -15,7 +16,7 @@ const LeaderboardPage = () => {
     try {
       setLoading(true);
       setError('');
-      const res = await fetch(`http://localhost:5000/api/analytics/leaderboard?period=${period}`, {
+      const res = await fetch(`${API_BASE_URL}/api/analytics/leaderboard?period=${period}`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }
@@ -36,7 +37,7 @@ const LeaderboardPage = () => {
 
   const refreshLeaderboard = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/analytics/leaderboard?period=${period}`, {
+      const res = await fetch(`${API_BASE_URL}/api/analytics/leaderboard?period=${period}`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }

@@ -4,6 +4,7 @@ import { Line, Bar } from 'react-chartjs-2';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './EngineeringHealthDashboard.css';
+import API_BASE_URL from '../config/api';
 
 const EngineeringHealthDashboard = () => {
   const { token } = useAuth();
@@ -16,7 +17,7 @@ const EngineeringHealthDashboard = () => {
     const fetchHealth = async (showLoading = true) => {
       try {
         if (showLoading) setLoading(true);
-        const res = await fetch('http://localhost:5000/api/analytics/engineering-health', {
+        const res = await fetch(`${API_BASE_URL}/api/analytics/engineering-health`, {
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`
           }

@@ -3,6 +3,7 @@ import { Search, X, FolderKanban, Users, User, CheckSquare, GitFork, GitCommit, 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './SearchOverlay.css';
+import API_BASE_URL from '../config/api';
 
 const SearchOverlay = ({ isOpen, onClose }) => {
   const { token } = useAuth();
@@ -62,7 +63,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
         const headers = {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         };
-        const res = await fetch(`http://localhost:5000/api/search?q=${encodeURIComponent(query)}`, { headers });
+        const res = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(query)}`, { headers });
         const data = await res.json();
         if (res.ok) {
           setResults(data.data);

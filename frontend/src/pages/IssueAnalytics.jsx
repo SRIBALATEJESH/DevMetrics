@@ -4,6 +4,7 @@ import { Line } from 'react-chartjs-2';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './IssueAnalytics.css';
+import API_BASE_URL from '../config/api';
 
 const IssueAnalytics = () => {
   const { token, user } = useAuth();
@@ -18,7 +19,7 @@ const IssueAnalytics = () => {
     try {
       setLoading(true);
       setError('');
-      const res = await fetch('http://localhost:5000/api/analytics/issues', {
+      const res = await fetch(`${API_BASE_URL}/api/analytics/issues`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }
@@ -45,7 +46,7 @@ const IssueAnalytics = () => {
 
   const refreshIssues = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/analytics/issues', {
+      const res = await fetch(`${API_BASE_URL}/api/analytics/issues`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }

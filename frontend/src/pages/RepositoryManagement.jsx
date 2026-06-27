@@ -19,6 +19,7 @@ import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import { useRole } from '../context/RoleContext';
 import './RepositoryManagement.css';
+import API_BASE_URL from '../config/api';
 
 const RepositoryManagement = ({ initialTab = 'catalog' }) => {
   const { token, user } = useAuth();
@@ -58,7 +59,7 @@ const RepositoryManagement = ({ initialTab = 'catalog' }) => {
       };
 
       // 1. Fetch repositories
-      const repoRes = await fetch('http://localhost:5000/api/auth/github/repositories', { headers });
+      const repoRes = await fetch(`${API_BASE_URL}/api/auth/github/repositories`, { headers });
       const repoData = await repoRes.json();
       if (repoRes.ok) {
         setRepos(repoData.data || []);
@@ -68,7 +69,7 @@ const RepositoryManagement = ({ initialTab = 'catalog' }) => {
 
       // 2. Fetch projects (for linking)
       if (canModify) {
-        const projRes = await fetch('http://localhost:5000/api/projects', { headers });
+        const projRes = await fetch(`${API_BASE_URL}/api/projects`, { headers });
         const projData = await projRes.json();
         if (projRes.ok) {
           setProjects(projData.data || []);
@@ -94,7 +95,7 @@ const RepositoryManagement = ({ initialTab = 'catalog' }) => {
       const headers = {
         'Authorization': `Bearer ${token || localStorage.getItem('token')}`
       };
-      const res = await fetch('http://localhost:5000/api/auth/github/repositories/refresh', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/repositories/refresh`, {
         method: 'POST',
         headers
       });
@@ -121,7 +122,7 @@ const RepositoryManagement = ({ initialTab = 'catalog' }) => {
         'Authorization': `Bearer ${token || localStorage.getItem('token')}`,
         'Content-Type': 'application/json'
       };
-      const res = await fetch('http://localhost:5000/api/auth/github/repositories/sync', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/repositories/sync`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ repoId })
@@ -159,7 +160,7 @@ const RepositoryManagement = ({ initialTab = 'catalog' }) => {
         'Authorization': `Bearer ${token || localStorage.getItem('token')}`,
         'Content-Type': 'application/json'
       };
-      const res = await fetch('http://localhost:5000/api/auth/github/repositories/link', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/repositories/link`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -192,7 +193,7 @@ const RepositoryManagement = ({ initialTab = 'catalog' }) => {
         'Authorization': `Bearer ${token || localStorage.getItem('token')}`,
         'Content-Type': 'application/json'
       };
-      const res = await fetch('http://localhost:5000/api/auth/github/repositories/unlink', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/repositories/unlink`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ repoId })
@@ -221,7 +222,7 @@ const RepositoryManagement = ({ initialTab = 'catalog' }) => {
         'Authorization': `Bearer ${token || localStorage.getItem('token')}`
       };
       // Fetch user rankings which contains git stats or fetch dashboard analytics
-      const res = await fetch('http://localhost:5000/api/auth/github/analytics', { headers });
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/analytics`, { headers });
       const data = await res.json();
       if (res.ok && data.data && data.data.leaderboard) {
         // filter contributors who have commits > 0 in general or map from mock

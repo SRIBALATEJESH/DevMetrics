@@ -3,6 +3,7 @@ import { useRole } from '../context/RoleContext';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import './ContributionAnalytics.css';
+import API_BASE_URL from '../config/api';
 
 const ContributionAnalytics = () => {
   const { currentRole } = useRole();
@@ -26,7 +27,7 @@ const ContributionAnalytics = () => {
 
       if (isDev) {
         // Fetch personal scores
-        const res = await fetch('http://localhost:5000/api/analytics/user/', { headers });
+        const res = await fetch(`${API_BASE_URL}/api/analytics/user/`, { headers });
         const data = await res.json();
         if (res.ok) {
           setPersonalScore(data.data);
@@ -35,7 +36,7 @@ const ContributionAnalytics = () => {
         }
       } else {
         // Fetch leaderboard for managers/admins
-        const res = await fetch('http://localhost:5000/api/analytics/leaderboard', { headers });
+        const res = await fetch(`${API_BASE_URL}/api/analytics/leaderboard`, { headers });
         const data = await res.json();
         if (res.ok) {
           setLeaderboard(data.data || []);

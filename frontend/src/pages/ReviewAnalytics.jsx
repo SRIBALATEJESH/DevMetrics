@@ -4,6 +4,7 @@ import { Line } from 'react-chartjs-2';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './ReviewAnalytics.css';
+import API_BASE_URL from '../config/api';
 
 const ReviewAnalytics = () => {
   const { token, user } = useAuth();
@@ -19,8 +20,8 @@ const ReviewAnalytics = () => {
       try {
         if (showLoading) setLoading(true);
         const url = isDev
-          ? `http://localhost:5000/api/analytics/reviews/${user.id}`
-          : 'http://localhost:5000/api/analytics/reviews';
+          ? `${API_BASE_URL}/api/analytics/reviews/${user.id}`
+          : `${API_BASE_URL}/api/analytics/reviews`;
 
         const res = await fetch(url, {
           headers: {

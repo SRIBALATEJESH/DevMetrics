@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import { GitCommit, GitPullRequest, AlertCircle, FileText, CheckCircle2, Link2, PlusCircle, RefreshCw, Trophy } from 'lucide-react';
 import './UniversalTimeline.css';
+import API_BASE_URL from '../config/api';
 
 const UniversalTimeline = () => {
   const { token } = useAuth();
@@ -19,7 +20,7 @@ const UniversalTimeline = () => {
     try {
       setLoading(true);
       setError('');
-      const res = await fetch('http://localhost:5000/api/timeline', {
+      const res = await fetch(`${API_BASE_URL}/api/timeline`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './CreateProject.css';
+import API_BASE_URL from '../config/api';
 
 const CreateProject = () => {
   const { token } = useAuth();
@@ -25,7 +26,7 @@ const CreateProject = () => {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/projects', {
+      const res = await fetch(`${API_BASE_URL}/api/projects`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useRole } from '../context/RoleContext';
 import Layout from '../components/Layout';
 import './ExportCenter.css';
+import API_BASE_URL from '../config/api';
 
 const ExportCenter = () => {
   const { token } = useAuth();
@@ -23,7 +24,7 @@ const ExportCenter = () => {
     try {
       setLoading(true);
       setError('');
-      const res = await fetch('http://localhost:5000/api/reports', {
+      const res = await fetch(`${API_BASE_URL}/api/reports`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }

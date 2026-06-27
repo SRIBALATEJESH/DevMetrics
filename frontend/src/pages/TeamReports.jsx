@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import './TeamReports.css';
+import API_BASE_URL from '../config/api';
 
 const TeamReports = () => {
   const { token } = useAuth();
@@ -13,7 +14,7 @@ const TeamReports = () => {
 
   const registerReportInDB = async (title, format) => {
     try {
-      await fetch('http://localhost:5000/api/reports', {
+      await fetch(`${API_BASE_URL}/api/reports`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,9 +41,9 @@ const TeamReports = () => {
         };
 
         const [teamsRes, tasksRes, leadRes] = await Promise.all([
-          fetch('http://localhost:5000/api/teams', { headers }),
-          fetch('http://localhost:5000/api/tasks', { headers }),
-          fetch('http://localhost:5000/api/analytics/leaderboard', { headers })
+          fetch(`${API_BASE_URL}/api/teams`, { headers }),
+          fetch(`${API_BASE_URL}/api/tasks`, { headers }),
+          fetch(`${API_BASE_URL}/api/analytics/leaderboard`, { headers })
         ]);
 
         const teamsData = await teamsRes.json();

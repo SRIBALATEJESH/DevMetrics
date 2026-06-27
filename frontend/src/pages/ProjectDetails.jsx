@@ -6,6 +6,7 @@ import { Star } from 'lucide-react'
 import CollaborationGraph from '../components/CollaborationGraph'
 import ProjectBurndown from '../components/ProjectBurndown'
 import './ProjectDetails.css'
+import API_BASE_URL from '../config/api';
 
 const ProjectDetails = () => {
   const { id } = useParams()
@@ -30,7 +31,7 @@ const ProjectDetails = () => {
 
   const toggleFavorite = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/projects/${id}/favorite`, {
+      const res = await fetch(`${API_BASE_URL}/api/projects/${id}/favorite`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
@@ -55,10 +56,10 @@ const ProjectDetails = () => {
         };
 
         const [projRes, tasksRes, teamsRes, timelineRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/projects/${id}`, { headers }),
-          fetch(`http://localhost:5000/api/tasks?project=${id}`, { headers }),
-          fetch(`http://localhost:5000/api/teams?project=${id}`, { headers }),
-          fetch(`http://localhost:5000/api/timeline/project/${id}`, { headers })
+          fetch(`${API_BASE_URL}/api/projects/${id}`, { headers }),
+          fetch(`${API_BASE_URL}/api/tasks?project=${id}`, { headers }),
+          fetch(`${API_BASE_URL}/api/teams?project=${id}`, { headers }),
+          fetch(`${API_BASE_URL}/api/timeline/project/${id}`, { headers })
         ]);
 
         const projData = await projRes.json();

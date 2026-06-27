@@ -14,6 +14,7 @@ import { Doughnut } from 'react-chartjs-2';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './KnowledgeDistribution.css';
+import API_BASE_URL from '../config/api';
 
 const KnowledgeDistribution = () => {
   const { token } = useAuth();
@@ -27,7 +28,7 @@ const KnowledgeDistribution = () => {
   useEffect(() => {
     const fetchRepos = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/auth/github/repositories', {
+        const res = await fetch(`${API_BASE_URL}/api/auth/github/repositories`, {
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`
           }
@@ -54,7 +55,7 @@ const KnowledgeDistribution = () => {
         setLoading(true);
         setError('');
         
-        let url = 'http://localhost:5000/api/analytics/knowledge-distribution';
+        let url = `${API_BASE_URL}/api/analytics/knowledge-distribution`;
         if (selectedRepoId) {
           url += `?repositoryId=${selectedRepoId}`;
         }

@@ -12,6 +12,7 @@ import {
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './GithubIntegration.css';
+import API_BASE_URL from '../config/api';
 
 const GithubIntegration = () => {
   const { user, token, updateUserLocal, fetchMe } = useAuth();
@@ -24,7 +25,7 @@ const GithubIntegration = () => {
     try {
       setLoading(true);
       setError('');
-      const res = await fetch('http://localhost:5000/api/github/profile', {
+      const res = await fetch(`${API_BASE_URL}/api/github/profile`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }
@@ -69,14 +70,14 @@ const GithubIntegration = () => {
   }, [window.location.search]);
 
   const handleConnect = () => {
-    window.location.href = `http://localhost:5000/api/auth/github/connect?token=${token || localStorage.getItem('token')}`;
+    window.location.href = `${API_BASE_URL}/api/auth/github/connect?token=${token || localStorage.getItem('token')}`;
   };
 
   const handleDisconnect = async () => {
     if (!confirm('Are you sure you want to disconnect your GitHub account? This will halt contribution score sync.')) return;
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/github/disconnect', {
+      const res = await fetch(`${API_BASE_URL}/api/github/disconnect`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
@@ -105,7 +106,7 @@ const GithubIntegration = () => {
   const handleSyncProfile = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/auth/github/repositories/refresh', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/github/repositories/refresh`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`

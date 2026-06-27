@@ -18,6 +18,7 @@ import { useAuth } from '../context/AuthContext'
 import './Dashboard.css'
 import { Line } from 'react-chartjs-2'
 import {
+import API_BASE_URL from '../config/api';
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
@@ -117,19 +118,19 @@ const Dashboard = () => {
         };
 
         // 1. Fetch projects
-        const projRes = await fetch('http://localhost:5000/api/projects', { headers });
+        const projRes = await fetch(`${API_BASE_URL}/api/projects`, { headers });
         const projData = await projRes.json();
         const projectsCount = projData.data ? projData.data.length : 0;
         setProjectsList(projData.data || []);
 
         // 2. Fetch users/leaderboard
-        const leadRes = await fetch('http://localhost:5000/api/analytics/leaderboard', { headers });
+        const leadRes = await fetch(`${API_BASE_URL}/api/analytics/leaderboard`, { headers });
         const leadData = await leadRes.json();
         const usersCount = leadData.data ? leadData.data.length : 0;
         setLeaderboardList(leadData.data || []);
 
         // 3. Fetch tasks
-        const taskRes = await fetch('http://localhost:5000/api/tasks', { headers });
+        const taskRes = await fetch(`${API_BASE_URL}/api/tasks`, { headers });
         const taskData = await taskRes.json();
         const tasksCount = taskData.data ? taskData.data.length : 0;
         const openTickets = taskData.data ? taskData.data.filter(t => t.status !== 'done').length : 0;
@@ -138,7 +139,7 @@ const Dashboard = () => {
         // 4. Fetch user's individual contribution score
         let contributionScore = 0;
         try {
-          const scoreRes = await fetch('http://localhost:5000/api/analytics/user/', { headers });
+          const scoreRes = await fetch(`${API_BASE_URL}/api/analytics/user/`, { headers });
           const scoreData = await scoreRes.json();
           if (scoreData.data) {
             contributionScore = scoreData.data.contributionScore;
@@ -158,7 +159,7 @@ const Dashboard = () => {
 
         // 5. Fetch logs (available to all roles now, filtered at backend)
         try {
-          const logRes = await fetch('http://localhost:5000/api/activities', { headers });
+          const logRes = await fetch(`${API_BASE_URL}/api/activities`, { headers });
           const logData = await logRes.json();
           if (logData.data) {
             setAllLogs(logData.data);
@@ -170,7 +171,7 @@ const Dashboard = () => {
 
         // 6. Fetch teams
         try {
-          const teamsRes = await fetch('http://localhost:5000/api/teams', { headers });
+          const teamsRes = await fetch(`${API_BASE_URL}/api/teams`, { headers });
           const teamsData = await teamsRes.json();
           setTeamsList(teamsData.data || []);
         } catch (e) {

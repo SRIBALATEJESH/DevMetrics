@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import { useRole } from '../context/RoleContext';
 import { useAuth } from '../context/AuthContext';
 import './AllProjects.css';
+import API_BASE_URL from '../config/api';
 
 const formatDateForInput = (dateString) => {
   if (!dateString) return '';
@@ -37,7 +38,7 @@ const AllProjects = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/projects', {
+      const res = await fetch(`${API_BASE_URL}/api/projects`, {
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
         }
@@ -84,7 +85,7 @@ const AllProjects = () => {
     setSaveError('');
 
     try {
-      const res = await fetch(`http://localhost:5000/api/projects/${editFormData.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/projects/${editFormData.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +121,7 @@ const AllProjects = () => {
       if (!project) return;
       const newStatus = project.status === 'archived' ? 'active' : 'archived';
 
-      const res = await fetch(`http://localhost:5000/api/projects/${projectId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +145,7 @@ const AllProjects = () => {
   const handleDelete = async (projectId) => {
     if (confirm('Are you sure you want to delete this project?')) {
       try {
-        const res = await fetch(`http://localhost:5000/api/projects/${projectId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`

@@ -4,6 +4,7 @@ import { Line } from 'react-chartjs-2';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import './DeveloperPerformanceDashboard.css';
+import API_BASE_URL from '../config/api';
 
 const DeveloperPerformanceDashboard = () => {
   const { token, user } = useAuth();
@@ -20,8 +21,8 @@ const DeveloperPerformanceDashboard = () => {
         if (showLoading) setLoading(true);
         // Call backend developer analytics
         const url = isDev
-          ? `http://localhost:5000/api/analytics/developers/${user.id}`
-          : 'http://localhost:5000/api/analytics/developers';
+          ? `${API_BASE_URL}/api/analytics/developers/${user.id}`
+          : `${API_BASE_URL}/api/analytics/developers`;
 
         const res = await fetch(url, {
           headers: {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './CollaborationGraph.css';
+import API_BASE_URL from '../config/api';
 
 const CollaborationGraph = ({ token }) => {
   const [data, setData] = useState({ nodes: [], edges: [] });
@@ -12,7 +13,7 @@ const CollaborationGraph = ({ token }) => {
     const fetchGraph = async () => {
       try {
         setLoading(true);
-        const res = await fetch('http://localhost:5000/api/analytics/collaboration-graph', {
+        const res = await fetch(`${API_BASE_URL}/api/analytics/collaboration-graph`, {
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`
           }

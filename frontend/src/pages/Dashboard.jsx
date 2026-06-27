@@ -18,7 +18,6 @@ import { useAuth } from '../context/AuthContext'
 import './Dashboard.css'
 import { Line } from 'react-chartjs-2'
 import {
-import API_BASE_URL from '../config/api';
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
@@ -29,6 +28,7 @@ import API_BASE_URL from '../config/api';
   Legend,
   Filler
 } from 'chart.js'
+import API_BASE_URL from '../config/api';
 
 ChartJS.register(
   CategoryScale,

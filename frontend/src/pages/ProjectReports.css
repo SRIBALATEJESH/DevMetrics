@@ -1,0 +1,31 @@
+@import './Dashboard.css';
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.report-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+}
+
+.report-icon {
+  font-size: 48px;
+}
+
+.report-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.report-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+}

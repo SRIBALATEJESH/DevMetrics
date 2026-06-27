@@ -1,0 +1,77 @@
+@import './Dashboard.css';
+
+.task-table-full {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.task-table-full th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-secondary);
+  padding: 16px 20px;
+  border-bottom: 2px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.task-table-full td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14.5px;
+  color: var(--text-secondary);
+  white-space: nowrap; /* Prevent vertical wrapping of characters in project and metadata columns */
+}
+
+.task-table-full tr:hover td {
+  background: rgba(255, 255, 255, 0.015);
+  color: var(--text-primary);
+}
+
+.task-table-full tr:last-child td {
+  border-bottom: none;
+}
+
+.task-name-cell {
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: normal !important;
+  min-width: 280px;
+}
+
+/* Set specific, compact widths for code pills and metadata columns */
+.task-table-full th:nth-child(2),
+.task-table-full td:nth-child(2) {
+  min-width: 150px;
+}
+
+.task-table-full th:nth-child(3),
+.task-table-full td:nth-child(3) {
+  width: 110px;
+  text-align: center;
+}
+
+.task-table-full th:nth-child(4),
+.task-table-full td:nth-child(4) {
+  width: 120px;
+  text-align: center;
+}
+
+.task-table-full th:nth-child(5),
+.task-table-full td:nth-child(5) {
+  width: 115px;
+  text-align: center;
+}
+
+.task-table-full th:nth-child(6),
+.task-table-full td:nth-child(6) {
+  width: 200px;
+  text-align: center;
+}

@@ -1,0 +1,63 @@
+@import './Dashboard.css';
+
+.activity-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.activity-log-item {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.log-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', var(--font-sans);
+  font-weight: 700;
+  font-size: 16px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.log-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.log-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.log-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.log-project {
+  font-family: var(--font-mono);
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--accent-blue);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Activity Log Filters focus states */
+.card select:focus,
+.card input:focus {
+  border-color: var(--accent-blue) !important;
+  box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15);
+}

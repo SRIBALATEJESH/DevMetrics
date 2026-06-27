@@ -1,0 +1,144 @@
+.review-analytics-container {
+  width: 100%;
+}
+
+.reviews-layout-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  .reviews-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.users-list-card {
+  padding: 20px !important;
+}
+
+.users-list-card h3 {
+  font-family: 'Space Grotesk', var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
+.user-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.user-list-item:hover {
+  border-color: var(--accent-blue);
+  background: rgba(79, 142, 247, 0.04);
+}
+
+.user-list-item.active {
+  border-color: var(--accent-blue);
+  background: rgba(79, 142, 247, 0.08);
+}
+
+.user-list-item .avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-list-item .info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.user-list-item .info .name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.user-list-item .info .count {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.user-list-item .chevron {
+  color: var(--text-muted);
+}
+
+.review-details-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.review-hero-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px !important;
+}
+
+@media (max-width: 600px) {
+  .review-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+.github-handle {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--accent-blue);
+  margin: 0;
+}
+
+.acceptance-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+}
+
+.acceptance-badge .icon {
+  color: var(--accent-green);
+}
+
+.acceptance-badge .info {
+  display: flex;
+  flex-direction: column;
+}
+
+.acceptance-badge .info .value {
+  font-family: 'Space Grotesk', var(--font-sans);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-green);
+}
+
+.acceptance-badge .info .label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}

@@ -1,0 +1,161 @@
+.universal-timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.timeline-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+}
+
+.timeline-actions h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.timeline-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  position: relative;
+  padding-left: 20px;
+}
+
+/* Timeline Vertical Line */
+.timeline-stream::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 95px;
+  bottom: 15px;
+  width: 2px;
+  background: var(--border);
+  z-index: 1;
+}
+
+.timeline-day-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeline-day-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.timeline-day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
+  gap: 24px;
+}
+
+.timeline-time {
+  min-width: 60px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  padding-top: 14px;
+  text-align: right;
+}
+
+.timeline-badge-container {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  margin-top: 8px;
+}
+
+.timeline-icon-svg {
+  padding: 2px;
+}
+
+.timeline-icon-svg.commit { color: var(--accent-pink); }
+.timeline-icon-svg.pr { color: var(--accent-purple); }
+.timeline-icon-svg.issue { color: var(--accent-red); }
+.timeline-icon-svg.report { color: var(--accent-blue); }
+.timeline-icon-svg.success { color: var(--accent-green); }
+.timeline-icon-svg.link { color: var(--accent-yellow); }
+.timeline-icon-svg.create { color: var(--accent-teal); }
+.timeline-icon-svg.trophy { color: var(--accent-yellow); }
+.timeline-icon-svg.default { color: var(--text-muted); }
+
+.timeline-body {
+  flex: 1;
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timeline-content {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.timeline-content .user-name {
+  font-weight: 600;
+  color: var(--accent-blue);
+  margin-right: 6px;
+}
+
+.timeline-content .action-text {
+  color: var(--text-secondary);
+}
+
+.timeline-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.timeline-meta .user-role {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.timeline-meta .repo-tag,
+.timeline-meta .project-tag {
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.empty-timeline {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-muted);
+}

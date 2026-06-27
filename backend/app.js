@@ -32,6 +32,10 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Explicitly handle all preflight OPTIONS requests
+app.options('*', cors());
+
 app.use(express.json({
   limit: '10mb',
   verify: (req, res, buf) => {

@@ -10,7 +10,12 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://dev-metrics-8tuo.vercel.app',
+      process.env.CLIENT_URL
+    ].filter(Boolean),
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }

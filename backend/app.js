@@ -7,7 +7,7 @@ dotenv.config();
 
 const app = express();
 
-// CORS configuration - allow Vercel frontend and local development
+// CORS configuration - manual headers for maximum reliability
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
@@ -15,26 +15,26 @@ const allowedOrigins = [
   'https://dev-metrics-8tuo.vercel.app'
 ].filter(Boolean);
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    // Also allow any *.vercel.app subdomain for preview deployments
-    if (origin.endsWith('.vercel.app')) {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// Manual CORS middleware - runs FIRST before everything else
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
 
-// Explicitly handle all preflight OPTIONS requests
-app.options('*', cors());
+  // Check if the request origin is allowed
+  if (origin && (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app'))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Immediately respond to preflight OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 
 app.use(express.json({
   limit: '10mb',

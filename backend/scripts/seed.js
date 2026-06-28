@@ -25,6 +25,34 @@ const seedUsers = [
     password: 'balu_2005',
     role: 'Admin',
     status: 'active'
+  },
+  {
+    name: 'Project Manager User',
+    email: 'indugula.balu+pm@gmail.com',
+    password: 'balu_2005',
+    role: 'Project Manager',
+    status: 'active'
+  },
+  {
+    name: 'Team Lead User',
+    email: 'indugula.balu+lead@gmail.com',
+    password: 'balu_2005',
+    role: 'Team Lead',
+    status: 'active'
+  },
+  {
+    name: 'Developer User',
+    email: 'indugula.balu+dev@gmail.com',
+    password: 'balu_2005',
+    role: 'Developer',
+    status: 'active'
+  },
+  {
+    name: 'Tester User',
+    email: 'indugula.balu+tester@gmail.com',
+    password: 'balu_2005',
+    role: 'Tester',
+    status: 'active'
   }
 ];
 

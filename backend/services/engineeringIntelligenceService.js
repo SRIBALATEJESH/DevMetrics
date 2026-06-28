@@ -10,43 +10,17 @@ const GithubIssue = require('../models/GithubIssue');
 const GithubRepository = require('../models/GithubRepository');
 
 /**
- * Gets or creates fallback projects for mock/demo purposes
+ * Gets projects from database
  */
 const getDemoProjects = async () => {
-  let projects = await Project.find({});
-  if (projects.length === 0) {
-    const admin = await User.findOne({ role: /admin/i });
-    const ownerId = admin ? admin._id : new mongoose.Types.ObjectId();
-    const demoProj = await Project.create({
-      title: 'DevMetrics Platform',
-      description: 'Analytics dashboard platform for engineering metrics and RBAC integration.',
-      status: 'active',
-      priority: 'high',
-      owner: ownerId
-    });
-    projects = [demoProj];
-  }
-  return projects;
+  return await Project.find({});
 };
 
 /**
- * Gets or creates fallback repos for mock/demo purposes
+ * Gets repos from database
  */
 const getDemoRepositories = async (projects) => {
-  let repos = await GithubRepository.find({});
-  if (repos.length === 0) {
-    const projId = projects[0]._id;
-    const demoRepos = [
-      { githubId: 'mock_1', name: 'auth-service', fullName: 'devmetrics/auth-service', owner: 'devmetrics', language: 'JavaScript', project: projId, status: 'linked' },
-      { githubId: 'mock_2', name: 'react-dashboard', fullName: 'devmetrics/react-dashboard', owner: 'devmetrics', language: 'CSS', project: projId, status: 'linked' },
-      { githubId: 'mock_3', name: 'ecommerce-platform', fullName: 'devmetrics/ecommerce-platform', owner: 'devmetrics', language: 'TypeScript', project: projId, status: 'linked' }
-    ];
-    for (const r of demoRepos) {
-      const created = await GithubRepository.create(r);
-      repos.push(created);
-    }
-  }
-  return repos;
+  return await GithubRepository.find({});
 };
 
 /**
@@ -263,6 +237,19 @@ const getBusFactor = async (repositoryId, projectId) => {
     selectedRepo = repos.find(r => r.status === 'linked') || repos[0];
   }
 
+  if (!selectedRepo) {
+    return {
+      repositoryId: null,
+      repositoryName: 'No Linked Repository',
+      busFactorScore: 0,
+      ownershipScore: 0,
+      ownershipBreakdown: [],
+      dependencyGraph: { nodes: [], links: [] },
+      criticalModules: [],
+      contributorDependencyMatrix: []
+    };
+  }
+
   // Count commits
   const commits = await GithubCommit.find({ repository: selectedRepo._id });
   const prs = await GithubPullRequest.find({ repository: selectedRepo._id });
@@ -449,6 +436,19 @@ const getKnowledgeDistribution = async (repositoryId, projectId, userRole, userI
 
   if (!selectedRepo) {
     selectedRepo = repos.find(r => r.status === 'linked') || repos[0];
+  }
+
+  if (!selectedRepo) {
+    return {
+      repositoryId: null,
+      repositoryName: 'No Linked Repository',
+      isTeamView: isDeveloper,
+      knowledgeRiskScore: 0,
+      knowledgeDistribution: [],
+      knowledgeHeatmap: [],
+      ownershipMatrix: [],
+      moduleKnowledgeGraph: []
+    };
   }
 
   // Get members if developer role ("Team View")

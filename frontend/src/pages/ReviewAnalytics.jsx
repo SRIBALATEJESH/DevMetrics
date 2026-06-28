@@ -70,20 +70,13 @@ const ReviewAnalytics = () => {
     return name.split(' ').map(n => n[0]).join('');
   };
 
-  // Mock Review Trend Chart
+  // Real Review Trend Chart (using actual reviews submitted count)
   const reviewTrendData = {
-    labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+    labels: ['Reviews Given'],
     datasets: [
       {
         label: 'Reviews Submitted',
-        data: activeMetrics ? [
-          Math.max(0, activeMetrics.reviewsGiven - 4),
-          Math.max(0, activeMetrics.reviewsGiven - 3),
-          Math.max(0, activeMetrics.reviewsGiven - 2),
-          Math.max(0, activeMetrics.reviewsGiven - 1),
-          activeMetrics.reviewsGiven,
-          activeMetrics.reviewsGiven + 1
-        ] : [1, 2, 3, 4, 5, 5],
+        data: activeMetrics ? [activeMetrics.reviewsGiven || 0] : [0],
         borderColor: '#10b981',
         borderWidth: 2,
         tension: 0.3,

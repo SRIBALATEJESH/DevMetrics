@@ -322,16 +322,18 @@ const getDeveloperPerformance = async (req, res) => {
 
     if (queryUser) {
       const performance = await ContributorScore.find({ user: queryUser }).populate('user', '-password');
+      const filtered = performance.filter(p => p.user !== null);
       return res.status(200).json({
         status: 'success',
-        data: performance
+        data: filtered
       });
     } else {
       const performance = await ContributorScore.find({ period: 'all-time' }).populate('user', '-password');
+      const filtered = performance.filter(p => p.user !== null);
       return res.status(200).json({
         status: 'success',
-        results: performance.length,
-        data: performance
+        results: filtered.length,
+        data: filtered
       });
     }
   } catch (error) {
@@ -353,6 +355,12 @@ const getRepositoryInsights = async (req, res) => {
     const repoId = req.query.repoId;
     if (repoId) {
       const metrics = await RepositoryMetrics.findOne({ repository: repoId }).populate('repository');
+      if (metrics && !metrics.repository) {
+        return res.status(200).json({
+          status: 'success',
+          data: null
+        });
+      }
       return res.status(200).json({
         status: 'success',
         data: metrics
@@ -360,10 +368,11 @@ const getRepositoryInsights = async (req, res) => {
     }
 
     const metricsList = await RepositoryMetrics.find({}).populate('repository');
+    const filteredList = metricsList.filter(m => m.repository !== null);
     res.status(200).json({
       status: 'success',
-      results: metricsList.length,
-      data: metricsList
+      results: filteredList.length,
+      data: filteredList
     });
   } catch (error) {
     console.error('Get repo insights error:', error.message);
@@ -389,6 +398,12 @@ const getReviewAnalytics = async (req, res) => {
 
     if (queryUser) {
       const metrics = await ReviewMetrics.findOne({ user: queryUser }).populate('user', '-password');
+      if (metrics && !metrics.user) {
+        return res.status(200).json({
+          status: 'success',
+          data: null
+        });
+      }
       return res.status(200).json({
         status: 'success',
         data: metrics
@@ -396,10 +411,11 @@ const getReviewAnalytics = async (req, res) => {
     }
 
     const metricsList = await ReviewMetrics.find({}).populate('user', '-password');
+    const filteredList = metricsList.filter(m => m.user !== null);
     res.status(200).json({
       status: 'success',
-      results: metricsList.length,
-      data: metricsList
+      results: filteredList.length,
+      data: filteredList
     });
   } catch (error) {
     console.error('Get review analytics error:', error.message);
@@ -420,6 +436,12 @@ const getIssueAnalytics = async (req, res) => {
     const userId = req.query.userId;
     if (userId) {
       const metrics = await IssueMetrics.findOne({ user: userId }).populate('user', '-password');
+      if (metrics && !metrics.user) {
+        return res.status(200).json({
+          status: 'success',
+          data: null
+        });
+      }
       return res.status(200).json({
         status: 'success',
         data: metrics
@@ -427,10 +449,11 @@ const getIssueAnalytics = async (req, res) => {
     }
 
     const metricsList = await IssueMetrics.find({}).populate('user', '-password');
+    const filteredList = metricsList.filter(m => m.user !== null);
     res.status(200).json({
       status: 'success',
-      results: metricsList.length,
-      data: metricsList
+      results: filteredList.length,
+      data: filteredList
     });
   } catch (error) {
     console.error('Get issue analytics error:', error.message);

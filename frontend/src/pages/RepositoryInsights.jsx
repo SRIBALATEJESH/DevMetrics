@@ -83,13 +83,13 @@ const RepositoryInsights = () => {
     };
   };
 
-  // Mock Commit Trend Chart data
+  // Real Commit Trend Chart data (using current repository commits)
   const commitTrendData = {
-    labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+    labels: ['Total Commits'],
     datasets: [
       {
         label: 'Commit Count',
-        data: activeRepo ? [activeRepo.commitCount - 15, activeRepo.commitCount - 11, activeRepo.commitCount - 8, activeRepo.commitCount - 4, activeRepo.commitCount - 2, activeRepo.commitCount] : [20, 24, 28, 30, 32, 35],
+        data: activeRepo ? [activeRepo.commitCount || 0] : [0],
         borderColor: '#a855f7',
         borderWidth: 2,
         tension: 0.3,

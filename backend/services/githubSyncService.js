@@ -407,30 +407,23 @@ const syncRepositoryData = async (repoId, currentUser) => {
     const [owner, name] = repo.fullName.split('/');
 
     try {
-      // Fetch all local users in the database to distribute contributions among roles
-      const localUsers = await User.find({});
-
       // 1. Fetch Commits
       const commitsResponse = await fetch(`https://api.github.com/repos/${owner}/${name}/commits?per_page=50`, {
         headers: { 'Authorization': `Bearer ${token}`, 'User-Agent': 'DevMetrics-OAuth-Integration' }
       });
       if (commitsResponse.ok) {
         const commits = await commitsResponse.json();
-        for (let idx = 0; idx < commits.length; idx++) {
-          const c = commits[idx];
-          // Distribute commits across active roles in the database for demonstration
-          const assignedUser = localUsers.length > 0 ? localUsers[idx % localUsers.length] : currentUser;
-
+        for (const c of commits) {
           const commitData = {
             githubId: c.sha,
             repository: repo._id,
             project,
             sha: c.sha,
             message: c.commit.message,
-            authorName: assignedUser.name,
-            authorEmail: assignedUser.email,
-            authorUsername: assignedUser.githubUsername || assignedUser.name.toLowerCase().replace(/\s+/g, '-'),
-            authorAvatar: assignedUser.githubAvatar || c.author?.avatar_url || '',
+            authorName: c.commit.author?.name || '',
+            authorEmail: c.commit.author?.email || '',
+            authorUsername: c.author?.login || '',
+            authorAvatar: c.author?.avatar_url || '',
             date: new Date(c.commit.author?.date || Date.now()),
             url: c.html_url
           };
@@ -444,10 +437,7 @@ const syncRepositoryData = async (repoId, currentUser) => {
       });
       if (pullsResponse.ok) {
         const pulls = await pullsResponse.json();
-        for (let idx = 0; idx < pulls.length; idx++) {
-          const p = pulls[idx];
-          const assignedUser = localUsers.length > 0 ? localUsers[idx % localUsers.length] : currentUser;
-
+        for (const p of pulls) {
           const prData = {
             githubId: p.node_id,
             number: p.number,
@@ -455,8 +445,8 @@ const syncRepositoryData = async (repoId, currentUser) => {
             project,
             title: p.title,
             state: p.merged_at ? 'merged' : p.state,
-            userUsername: assignedUser.githubUsername || assignedUser.name.toLowerCase().replace(/\s+/g, '-'),
-            userAvatar: assignedUser.githubAvatar || p.user?.avatar_url || '',
+            userUsername: p.user?.login || '',
+            userAvatar: p.user?.avatar_url || '',
             merged: !!p.merged_at,
             mergedAt: p.merged_at ? new Date(p.merged_at) : null,
             createdAt: new Date(p.created_at),
@@ -473,17 +463,14 @@ const syncRepositoryData = async (repoId, currentUser) => {
           });
           if (reviewsResponse.ok) {
             const reviews = await reviewsResponse.json();
-            for (let rIdx = 0; rIdx < reviews.length; rIdx++) {
-              const r = reviews[rIdx];
-              const reviewerUser = localUsers.length > 0 ? localUsers[(idx + rIdx + 1) % localUsers.length] : currentUser;
-
+            for (const r of reviews) {
               const reviewData = {
                 githubId: r.id.toString(),
                 pullRequest: prDoc._id,
                 repository: repo._id,
                 project,
-                userUsername: reviewerUser.githubUsername || reviewerUser.name.toLowerCase().replace(/\s+/g, '-'),
-                userAvatar: reviewerUser.githubAvatar || r.user?.avatar_url || '',
+                userUsername: r.user?.login || '',
+                userAvatar: r.user?.avatar_url || '',
                 state: r.state,
                 submittedAt: new Date(r.submitted_at || Date.now()),
                 body: r.body || '',
@@ -501,12 +488,9 @@ const syncRepositoryData = async (repoId, currentUser) => {
       });
       if (issuesResponse.ok) {
         const issues = await issuesResponse.json();
-        for (let idx = 0; idx < issues.length; idx++) {
-          const i = issues[idx];
+        for (const i of issues) {
+          // GitHub API returns PRs as issues, so filter them out
           if (i.pull_request) continue;
-
-          const assignedUser = localUsers.length > 0 ? localUsers[idx % localUsers.length] : currentUser;
-          const assigneeUser = localUsers.length > 0 ? localUsers[(idx + 2) % localUsers.length] : currentUser;
 
           const issueData = {
             githubId: i.node_id,
@@ -515,9 +499,9 @@ const syncRepositoryData = async (repoId, currentUser) => {
             project,
             title: i.title,
             state: i.state,
-            userUsername: assignedUser.githubUsername || assignedUser.name.toLowerCase().replace(/\s+/g, '-'),
-            userAvatar: assignedUser.githubAvatar || i.user?.avatar_url || '',
-            assigneeUsername: assigneeUser.githubUsername || assigneeUser.name.toLowerCase().replace(/\s+/g, '-'),
+            userUsername: i.user?.login || '',
+            userAvatar: i.user?.avatar_url || '',
+            assigneeUsername: i.assignee?.login || '',
             createdAt: new Date(i.created_at),
             updatedAt: i.updated_at ? new Date(i.updated_at) : null,
             closedAt: i.closed_at ? new Date(i.closed_at) : null,

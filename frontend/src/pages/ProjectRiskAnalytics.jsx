@@ -145,7 +145,9 @@ const ProjectRiskAnalytics = () => {
 
   // Line chart options & data
   const trendData = riskData ? {
-    labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+    labels: riskData.riskTrend && riskData.riskTrend.length === 1
+      ? ['Current']
+      : ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'].slice(0, riskData.riskTrend ? riskData.riskTrend.length : 6),
     datasets: [
       {
         label: 'Risk Score',

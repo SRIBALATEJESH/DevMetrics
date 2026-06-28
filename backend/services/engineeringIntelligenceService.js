@@ -70,16 +70,10 @@ const getProjectRisk = async (projectId) => {
     throw new Error('No projects found to perform risk analytics.');
   }
 
-  // Check if we have sufficient data in DB, if not use realistic demo model
+  // Check if we have sufficient data in DB
   const tasks = await Task.find({ project: selectedProject._id });
   const repos = await GithubRepository.find({ project: selectedProject._id });
   const repoIds = repos.map(r => r._id);
-  const commitsCount = await GithubCommit.countDocuments({ repository: { $in: repoIds } });
-
-  // If there is very little/no data, serve highly-curated engineering intelligence demo results
-  if (tasks.length === 0 && commitsCount === 0) {
-    return getMockProjectRiskData(selectedProject, allProjects);
-  }
 
   // Calculate real values from MongoDB
   const overdueTasksCount = await Task.countDocuments({
@@ -208,15 +202,8 @@ const getProjectRisk = async (projectId) => {
     (knowledgeRisk * 0.20)
   );
 
-  // Generate trends
-  const riskTrend = [
-    overallRiskScore - 8,
-    overallRiskScore - 5,
-    overallRiskScore - 3,
-    overallRiskScore + 2,
-    overallRiskScore - 1,
-    overallRiskScore
-  ].map(v => Math.max(0, Math.min(100, v)));
+  // Generate trends (Real current value only)
+  const riskTrend = [overallRiskScore];
 
   // Other high risk projects
   const highRiskProjects = [];
@@ -254,69 +241,7 @@ const getProjectRisk = async (projectId) => {
   };
 };
 
-/**
- * Returns mock Project Risk Data matching SRS spec criteria
- */
-const getMockProjectRiskData = (selectedProject, allProjects) => {
-  return {
-    projectId: selectedProject._id,
-    projectName: selectedProject.title,
-    projectRiskScore: 78,
-    riskTrend: [64, 68, 70, 75, 76, 78],
-    riskBreakdown: {
-      taskRisk: 82,
-      reviewRisk: 90,
-      issueRisk: 75,
-      teamRisk: 65,
-      knowledgeRisk: 85
-    },
-    criticalModules: [
-      {
-        name: 'Authentication Module',
-        issuesCount: 15,
-        reviewsCount: 0,
-        contributorsCount: 1,
-        ownershipPercent: 95,
-        riskLevel: 'HIGH'
-      },
-      {
-        name: 'Billing Integration',
-        issuesCount: 8,
-        reviewsCount: 2,
-        contributorsCount: 1,
-        ownershipPercent: 90,
-        riskLevel: 'HIGH'
-      },
-      {
-        name: 'Core Analytics Engine',
-        issuesCount: 5,
-        reviewsCount: 12,
-        contributorsCount: 3,
-        ownershipPercent: 45,
-        riskLevel: 'MEDIUM'
-      },
-      {
-        name: 'User Management Panel',
-        issuesCount: 2,
-        reviewsCount: 18,
-        contributorsCount: 4,
-        ownershipPercent: 30,
-        riskLevel: 'LOW'
-      }
-    ],
-    highRiskProjects: allProjects
-      .filter(p => p._id.toString() !== selectedProject._id.toString())
-      .map(p => ({
-        id: p._id,
-        title: p.title,
-        riskScore: 68,
-        riskLevel: 'High'
-      })).concat([
-        { id: 'mock_proj_risk_1', title: 'E-Commerce Frontend', riskScore: 84, riskLevel: 'Critical' },
-        { id: 'mock_proj_risk_2', title: 'Mobile Push Service', riskScore: 72, riskLevel: 'High' }
-      ])
-  };
-};
+
 
 /**
  * Compute Bus Factor Analytics
@@ -344,10 +269,7 @@ const getBusFactor = async (repositoryId, projectId) => {
   const reviews = await GithubReview.find({ repository: selectedRepo._id });
   const tasks = await Task.find({ project: selectedRepo.project });
 
-  // If DB lacks data, fallback to realistic mock matching spec examples
-  if (commits.length === 0 && prs.length === 0) {
-    return getMockBusFactorData(selectedRepo, repos);
-  }
+
 
   // Real computation from DB
   const contributorStats = {};
@@ -414,7 +336,16 @@ const getBusFactor = async (repositoryId, projectId) => {
   });
 
   if (contributorList.length === 0) {
-    return getMockBusFactorData(selectedRepo, repos);
+    return {
+      repositoryId: selectedRepo._id,
+      repositoryName: selectedRepo.name,
+      busFactorScore: 0,
+      ownershipScore: 0,
+      ownershipBreakdown: [],
+      dependencyGraph: { nodes: [], links: [] },
+      criticalModules: [],
+      contributorDependencyMatrix: []
+    };
   }
 
   // Calculate percentages
@@ -448,8 +379,8 @@ const getBusFactor = async (repositoryId, projectId) => {
   const links = [];
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
-      // Connect overlapping collaborators
-      links.push({ source: nodes[i].id, target: nodes[j].id, value: Math.round(15 + Math.random() * 20) });
+      // Connect overlapping collaborators using average ownership (real data indicator)
+      links.push({ source: nodes[i].id, target: nodes[j].id, value: Math.round((nodes[i].val + nodes[j].val) / 2) });
     }
   }
 
@@ -459,14 +390,17 @@ const getBusFactor = async (repositoryId, projectId) => {
   
   for (const repo of allLinkedRepos) {
     const repoCommitsCount = await GithubCommit.countDocuments({ repository: repo._id });
-    contributorList.forEach(c => {
-      // Compute specific repo ownership
+    for (const c of contributorList) {
+      const contributorCommitsCount = await GithubCommit.countDocuments({
+        repository: repo._id,
+        authorUsername: c.username
+      });
       matrix.push({
         moduleName: repo.name,
         contributor: c.name,
-        ownershipPercent: repoCommitsCount > 0 ? Math.round((Math.random() * 40) + 10) : 0 // dynamic estimate
+        ownershipPercent: repoCommitsCount > 0 ? Math.round((contributorCommitsCount / repoCommitsCount) * 100) : 0
       });
-    });
+    }
   }
 
   // Critical Modules
@@ -493,82 +427,7 @@ const getBusFactor = async (repositoryId, projectId) => {
   };
 };
 
-/**
- * Returns mock Bus Factor Data matching SRS specification criteria
- */
-const getMockBusFactorData = (selectedRepo, allRepos) => {
-  // Mock data specifically aligning with SRS Authentication Module John=90% Alex=10% BF=1 Risk=Critical
-  if (selectedRepo.name.includes('auth') || selectedRepo.name.includes('mock_1')) {
-    return {
-      repositoryId: selectedRepo._id,
-      repositoryName: selectedRepo.name,
-      busFactorScore: 1,
-      ownershipScore: 10,
-      ownershipBreakdown: [
-        { name: 'John Doe', value: 90 },
-        { name: 'Alex Smith', value: 10 }
-      ],
-      dependencyGraph: {
-        nodes: [{ id: 'John Doe', val: 90 }, { id: 'Alex Smith', val: 10 }],
-        links: [{ source: 'John Doe', target: 'Alex Smith', value: 10 }]
-      },
-      criticalModules: [
-        {
-          name: 'Authentication Module',
-          topContributor: 'John Doe',
-          ownershipPercent: 90,
-          busFactor: 1,
-          risk: 'Critical'
-        }
-      ],
-      contributorDependencyMatrix: [
-        { moduleName: 'Authentication Module', contributor: 'John Doe', ownershipPercent: 90 },
-        { moduleName: 'Authentication Module', contributor: 'Alex Smith', ownershipPercent: 10 },
-        { moduleName: 'Billing module', contributor: 'John Doe', ownershipPercent: 95 },
-        { moduleName: 'Billing module', contributor: 'Alex Smith', ownershipPercent: 5 }
-      ]
-    };
-  }
 
-  // E-Commerce / React Dashboard mockup
-  return {
-    repositoryId: selectedRepo._id,
-    repositoryName: selectedRepo.name,
-    busFactorScore: 2,
-    ownershipScore: 42,
-    ownershipBreakdown: [
-      { name: 'John Doe', value: 55 },
-      { name: 'Priya Patel', value: 25 },
-      { name: 'Alex Smith', value: 20 }
-    ],
-    dependencyGraph: {
-      nodes: [
-        { id: 'John Doe', val: 55 },
-        { id: 'Priya Patel', val: 25 },
-        { id: 'Alex Smith', val: 20 }
-      ],
-      links: [
-        { source: 'John Doe', target: 'Priya Patel', value: 45 },
-        { source: 'John Doe', target: 'Alex Smith', value: 30 },
-        { source: 'Priya Patel', target: 'Alex Smith', value: 25 }
-      ]
-    },
-    criticalModules: [
-      {
-        name: 'Database Operations',
-        topContributor: 'John Doe',
-        ownershipPercent: 85,
-        busFactor: 1,
-        risk: 'Critical'
-      }
-    ],
-    contributorDependencyMatrix: allRepos.map(r => ([
-      { moduleName: r.name, contributor: 'John Doe', ownershipPercent: r.name === 'react-dashboard' ? 30 : 60 },
-      { moduleName: r.name, contributor: 'Priya Patel', ownershipPercent: r.name === 'react-dashboard' ? 50 : 20 },
-      { moduleName: r.name, contributor: 'Alex Smith', ownershipPercent: 20 }
-    ])).flat()
-  };
-};
 
 /**
  * Compute Knowledge Distribution Dashboard Analytics
@@ -608,10 +467,7 @@ const getKnowledgeDistribution = async (repositoryId, projectId, userRole, userI
   const commits = await GithubCommit.find({ repository: selectedRepo._id });
   const prs = await GithubPullRequest.find({ repository: selectedRepo._id });
   
-  // If DB lacks data, fallback to mock distribution
-  if (commits.length === 0 && prs.length === 0) {
-    return getMockKnowledgeDistributionData(selectedRepo, isDeveloper, teamMembers);
-  }
+
 
   // Core intelligence mapping engine to modules
   // Define standard architectural modules
@@ -641,7 +497,7 @@ const getKnowledgeDistribution = async (repositoryId, projectId, userRole, userI
       const uCommits = await GithubCommit.countDocuments({ repository: selectedRepo._id, authorUsername: ghUser });
       const uPRs = await GithubPullRequest.countDocuments({ repository: selectedRepo._id, userUsername: ghUser });
       
-      const knowledgeScore = uCommits * 5 + uPRs * 10 + (Math.round(Math.random() * 20)); // baseline
+      const knowledgeScore = uCommits * 5 + uPRs * 10; // purely real count based score
       modScoreSum += knowledgeScore;
       
       modContributors.push({
@@ -706,90 +562,7 @@ const getKnowledgeDistribution = async (repositoryId, projectId, userRole, userI
   };
 };
 
-/**
- * Returns mock Knowledge Distribution data matching SRS specifications
- */
-const getMockKnowledgeDistributionData = (selectedRepo, isDeveloper, teamMembers) => {
-  // Mock data explicitly matching SRS Frontend (John=50% Priya=30% Alex=20%) Healthy
-  // and Authentication (John=95% Alex=5%) Risky
-  const rawHeatmap = [
-    { moduleName: 'Frontend Module', contributor: 'John Doe', value: 50 },
-    { moduleName: 'Frontend Module', contributor: 'Priya Patel', value: 30 },
-    { moduleName: 'Frontend Module', contributor: 'Alex Smith', value: 20 },
-    { moduleName: 'Authentication Module', contributor: 'John Doe', value: 95 },
-    { moduleName: 'Authentication Module', contributor: 'Alex Smith', value: 5 },
-    { moduleName: 'Backend Module', contributor: 'John Doe', value: 40 },
-    { moduleName: 'Backend Module', contributor: 'Priya Patel', value: 45 },
-    { moduleName: 'Backend Module', contributor: 'Alex Smith', value: 15 },
-    { moduleName: 'Database Module', contributor: 'John Doe', value: 85 },
-    { moduleName: 'Database Module', contributor: 'Priya Patel', value: 10 },
-    { moduleName: 'Database Module', contributor: 'Alex Smith', value: 5 },
-    { moduleName: 'CI/CD Module', contributor: 'Alex Smith', value: 70 },
-    { moduleName: 'CI/CD Module', contributor: 'John Doe', value: 20 },
-    { moduleName: 'CI/CD Module', contributor: 'Priya Patel', value: 10 }
-  ];
 
-  // Developer view restricted list of users if team members configured
-  let filteredHeatmap = rawHeatmap;
-  if (isDeveloper) {
-    // Developer belongs to a team with Priya and Alex, John is in another team
-    // Simulate Team View: developer only sees Priya Patel and Alex Smith
-    filteredHeatmap = rawHeatmap.filter(h => h.contributor !== 'John Doe');
-    
-    // Recalculate percentage shares for filtered list to add up to 100%
-    const moduleSums = {};
-    filteredHeatmap.forEach(h => {
-      moduleSums[h.moduleName] = (moduleSums[h.moduleName] || 0) + h.value;
-    });
-
-    filteredHeatmap.forEach(h => {
-      const sum = moduleSums[h.moduleName] || 1;
-      h.value = Math.round((h.value / sum) * 100);
-    });
-  }
-
-  const matrix = filteredHeatmap.map(h => ({
-    moduleName: h.moduleName,
-    contributor: h.contributor,
-    role: h.value > 60 ? 'Primary Owner' : (h.value > 20 ? 'Backup' : 'Secondary')
-  }));
-
-  const moduleGroups = {};
-  filteredHeatmap.forEach(h => {
-    if (!moduleGroups[h.moduleName]) {
-      moduleGroups[h.moduleName] = [];
-    }
-    moduleGroups[h.moduleName].push(`${h.contributor} (${h.value}%)`);
-  });
-
-  const moduleKnowledgeGraph = Object.keys(moduleGroups).map(modName => {
-    const list = filteredHeatmap.filter(h => h.moduleName === modName);
-    list.sort((a, b) => b.value - a.value);
-    const topVal = list[0]?.value || 0;
-    const isRisky = topVal > 80;
-    return {
-      moduleName: modName,
-      contributors: moduleGroups[modName],
-      status: isRisky ? 'Risky' : 'Healthy',
-      riskScore: topVal
-    };
-  });
-
-  const overallRisk = Math.round(moduleKnowledgeGraph.reduce((acc, curr) => acc + curr.riskScore, 0) / moduleKnowledgeGraph.length);
-
-  return {
-    repositoryId: selectedRepo._id,
-    repositoryName: selectedRepo.name,
-    isTeamView: isDeveloper,
-    knowledgeRiskScore: overallRisk,
-    knowledgeDistribution: filteredHeatmap
-      .filter(h => h.moduleName === 'Frontend Module')
-      .map(h => ({ name: h.contributor, value: h.value })),
-    knowledgeHeatmap: filteredHeatmap,
-    ownershipMatrix: matrix,
-    moduleKnowledgeGraph
-  };
-};
 
 module.exports = {
   getProjectRisk,

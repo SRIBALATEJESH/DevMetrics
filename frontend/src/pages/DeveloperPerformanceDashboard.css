@@ -311,3 +311,41 @@
   width: 100%;
   margin-top: 20px;
 }
+
+/* Period Selector Tabs */
+.period-tabs-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: -8px;
+}
+
+.period-tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-elevated);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.period-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.period-tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.period-tab-btn.active {
+  background: var(--accent-blue);
+  color: white;
+}

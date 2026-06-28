@@ -9,21 +9,19 @@ import API_BASE_URL from '../config/api';
 const DeveloperPerformanceDashboard = () => {
   const { token, user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [performanceData, setPerformanceData] = useState([]);
+  const [contributors, setContributors] = useState([]);
   const [selectedDeveloper, setSelectedDeveloper] = useState(null);
+  const [devPeriods, setDevPeriods] = useState({ weekly: null, monthly: null, 'all-time': null });
+  const [selectedPeriod, setSelectedPeriod] = useState('all-time');
   const [error, setError] = useState('');
 
   const isDev = user?.role?.toLowerCase() === 'developer';
 
   useEffect(() => {
-    const fetchPerformance = async (showLoading = true) => {
+    const fetchDeveloperSelfData = async (showLoading = true) => {
       try {
         if (showLoading) setLoading(true);
-        // Call backend developer analytics
-        const url = isDev
-          ? `${API_BASE_URL}/api/analytics/developers/${user.id}`
-          : `${API_BASE_URL}/api/analytics/developers`;
-
+        const url = `${API_BASE_URL}/api/analytics/developers/${user.id}`;
         const res = await fetch(url, {
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`
@@ -32,14 +30,11 @@ const DeveloperPerformanceDashboard = () => {
         const data = await res.json();
         if (res.ok) {
           const list = data.data || [];
-          setPerformanceData(list);
-          if (list.length > 0) {
-            setSelectedDeveloper((prev) => {
-              if (!prev) return list[0];
-              const matched = list.find((d) => (d.user?._id || d.user) === (prev.user?._id || prev.user));
-              return matched || list[0];
-            });
-          }
+          const weekly = list.find(item => item.period === 'weekly') || null;
+          const monthly = list.find(item => item.period === 'monthly') || null;
+          const allTime = list.find(item => item.period === 'all-time') || null;
+          setDevPeriods({ weekly, monthly, 'all-time': allTime });
+          setSelectedDeveloper(allTime || weekly || monthly || list[0]);
         } else {
           setError(data.message || 'Failed to fetch developer performance data.');
         }
@@ -51,11 +46,50 @@ const DeveloperPerformanceDashboard = () => {
       }
     };
 
-    fetchPerformance(true);
+    const fetchAllContributors = async (showLoading = true) => {
+      try {
+        if (showLoading) setLoading(true);
+        const url = `${API_BASE_URL}/api/analytics/developers`;
+        const res = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${token || localStorage.getItem('token')}`
+          }
+        });
+        const data = await res.json();
+        if (res.ok) {
+          const list = data.data || [];
+          setContributors(list);
+          if (list.length > 0) {
+            setSelectedDeveloper((prev) => {
+              if (!prev) return list[0];
+              const matched = list.find((d) => (d.user?._id || d.user) === (prev.user?._id || prev.user));
+              return matched || list[0];
+            });
+          }
+        } else {
+          setError(data.message || 'Failed to fetch contributors performance.');
+        }
+      } catch (err) {
+        console.error(err);
+        setError('Network error loading contributors analytics.');
+      } finally {
+        if (showLoading) setLoading(false);
+      }
+    };
+
+    if (isDev) {
+      fetchDeveloperSelfData(true);
+    } else {
+      fetchAllContributors(true);
+    }
 
     const handleRefresh = () => {
       console.log('[DeveloperPerformance] Auto-refreshing performance data...');
-      fetchPerformance(false);
+      if (isDev) {
+        fetchDeveloperSelfData(false);
+      } else {
+        fetchAllContributors(false);
+      }
     };
 
     window.addEventListener('analytics_updated', handleRefresh);
@@ -66,7 +100,35 @@ const DeveloperPerformanceDashboard = () => {
     };
   }, [token, isDev, user]);
 
-  const activeDev = selectedDeveloper || performanceData[0];
+  useEffect(() => {
+    if (!selectedDeveloper || isDev) return;
+
+    const fetchPeriods = async () => {
+      try {
+        const devId = selectedDeveloper.user?._id || selectedDeveloper.user;
+        const url = `${API_BASE_URL}/api/analytics/developers/${devId}`;
+        const res = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${token || localStorage.getItem('token')}`
+          }
+        });
+        const data = await res.json();
+        if (res.ok) {
+          const list = data.data || [];
+          const weekly = list.find(item => item.period === 'weekly') || null;
+          const monthly = list.find(item => item.period === 'monthly') || null;
+          const allTime = list.find(item => item.period === 'all-time') || null;
+          setDevPeriods({ weekly, monthly, 'all-time': allTime });
+        }
+      } catch (err) {
+        console.error('Failed to fetch developer periods:', err);
+      }
+    };
+
+    fetchPeriods();
+  }, [selectedDeveloper, token, isDev]);
+
+  const activeDev = devPeriods[selectedPeriod] || selectedDeveloper;
 
   // Helper to format values
   const getInitials = (name) => {
@@ -74,24 +136,22 @@ const DeveloperPerformanceDashboard = () => {
     return name.split(' ').map(n => n[0]).join('');
   };
 
-  // Mock performance trends chart
+  const weeklyScore = devPeriods.weekly?.contributionScore || 0;
+  const monthlyScore = devPeriods.monthly?.contributionScore || 0;
+  const allTimeScore = devPeriods.allTime?.contributionScore || 0;
+
+  // Real performance trends chart using weekly, monthly, and all-time scores
   const trendChartData = {
-    labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+    labels: ['Weekly', 'Monthly', 'All-Time'],
     datasets: [
       {
         label: 'Contribution Score (V2)',
-        data: activeDev ? [
-          activeDev.contributionScore - 8,
-          activeDev.contributionScore - 5,
-          activeDev.contributionScore - 3,
-          activeDev.contributionScore - 2,
-          activeDev.contributionScore - 1,
-          activeDev.contributionScore
-        ] : [65, 70, 72, 75, 78, 80],
+        data: [weeklyScore, monthlyScore, allTimeScore],
         borderColor: '#4f8ef7',
+        backgroundColor: 'rgba(79, 142, 247, 0.1)',
         borderWidth: 2,
         tension: 0.3,
-        fill: false,
+        fill: true,
         pointBackgroundColor: '#4f8ef7'
       }
     ]
@@ -137,14 +197,14 @@ const DeveloperPerformanceDashboard = () => {
         ) : (
           <div className="performance-layout-grid">
             {/* Left Side: Developer Directory (Hide if single developer logged in) */}
-            {!isDev && performanceData.length > 0 && (
+            {!isDev && contributors.length > 0 && (
               <div className="developer-list-card glass-card">
                 <h3>Contributors Directory</h3>
                 <div className="list-container">
-                  {performanceData.map(item => (
+                  {contributors.map(item => (
                     <div
                       key={item._id}
-                      className={`dev-list-item ${activeDev?._id === item._id ? 'active' : ''}`}
+                      className={`dev-list-item ${(selectedDeveloper?.user?._id || selectedDeveloper?.user) === (item.user?._id || item.user) ? 'active' : ''}`}
                       onClick={() => setSelectedDeveloper(item)}
                     >
                       <div className="avatar" style={{ background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-purple))' }}>
@@ -165,6 +225,21 @@ const DeveloperPerformanceDashboard = () => {
             {/* Right Side: Active Developer Details Panel */}
             {activeDev ? (
               <div className="performance-details-panel">
+                {/* Period Selector Tabs */}
+                <div className="period-tabs-container">
+                  <div className="period-tabs">
+                    {['weekly', 'monthly', 'all-time'].map((p) => (
+                      <button
+                        key={p}
+                        className={`period-tab-btn ${selectedPeriod === p ? 'active' : ''}`}
+                        onClick={() => setSelectedPeriod(p)}
+                      >
+                        {p.charAt(0).toUpperCase() + p.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Profile Header Summary */}
                 <div className="developer-hero-card glass-card">
                   <div className="hero-main">

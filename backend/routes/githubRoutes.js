@@ -34,7 +34,7 @@ const getFrontendUrl = (req) => {
   const origin = req.headers.origin || '';
   if (origin.includes('localhost:5174')) return 'http://localhost:5174';
   if (origin.includes('localhost:5173')) return 'http://localhost:5173';
-  return 'http://localhost:5174'; // Default to active port 5174
+  return process.env.CLIENT_URL || 'https://dev-metrics-8tuo.vercel.app';
 };
 
 // Helper: exchange GitHub code for access token + profile (mock or real)

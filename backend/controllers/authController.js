@@ -502,13 +502,16 @@ const createMailTransporter = () => {
     return null;
   }
 
-  // Create transporter for Gmail
+  // Create transporter for Gmail with fast fail timeouts
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: user,
       pass: pass
-    }
+    },
+    connectionTimeout: 5000,
+    greetingTimeout: 5000,
+    socketTimeout: 5000
   });
 };
 

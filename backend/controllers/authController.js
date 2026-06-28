@@ -502,9 +502,10 @@ const createMailTransporter = () => {
     return null;
   }
 
-  // Create transporter for Gmail with fast fail timeouts
+  // Create transporter for Gmail with fast fail timeouts and IPv4 enforcement
   return nodemailer.createTransport({
     service: 'gmail',
+    family: 4, // Force IPv4 to avoid IPv6 ENETUNREACH errors
     auth: {
       user: user,
       pass: pass

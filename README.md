@@ -283,10 +283,18 @@ FIREBASE_PROJECT_ID=your_firebase_project_id
 ```
 
 #### 2. Frontend `.env` Configuration
-Create a `.env` file inside `frontend/` (or rely on default Vite dev fallback):
+Create a `.env` file inside `frontend/` (see `frontend/.env.example`):
 
 ```env
 VITE_API_URL=http://localhost:5000
+
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
 ```
 
 ---
